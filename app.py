@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from send_email import send_email
+from sqlalchemy.sql import func
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = YOUR_URI_HERE
 db = SQLAlchemy(app)
 
 
@@ -26,7 +29,17 @@ def success():
     if request.method == 'POST':
         email = request.form['email_name']
         height = request.form['height_name']
-    return render_template('success.html')
+        if db.session.query(Data).filter(Data.email_ == email).count() == 0:
+            data = Data(email, height)
+            db.session.add(data)
+            db.session.commit()
+            average = db.session.query(func.avg(Data.height_)).scalar()
+            average = round(average, 1)
+            count = db.session.query(Data.height_).count()
+            send_email(email, height, average, count)
+            return render_template('success.html')
+    return render_template('index.html',
+                           text='Seems like we already have a height for that email address')
 
 
 if __name__ == '__main__':

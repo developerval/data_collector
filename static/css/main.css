@@ -1,6 +1,6 @@
 body {
     background-color: rgb(199, 199, 199);
-    font-family: Calibri, monospace;
+    font-family: Verdana, monospace;
 }
 
 .container {
@@ -62,4 +62,9 @@ input {
 
 input::placeholder {
     color: rgb(51, 51, 51)
+}
+
+.message { 
+    font-size: 11px;
+    color: rgb(221, 224, 20)
 }
